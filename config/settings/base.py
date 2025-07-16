@@ -138,7 +138,6 @@ SIMPLE_JWT = {
 JWT_AUTH_COOKIE = 'access_token'
 JWT_AUTH_REFRESH_COOKIE = 'refresh_token'
 JWT_AUTH_HTTPONLY = True
-JWT_AUTH_SAMESITE = 'Lax'
 
 # REST Framework Configuration
 REST_FRAMEWORK = {

@@ -33,6 +33,7 @@ CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
 
 # JWT settings for production
 JWT_AUTH_SECURE = True
+JWT_AUTH_SAMESITE = 'None'
 JWT_AUTH_COOKIE_DOMAIN = config('JWT_AUTH_COOKIE_DOMAIN', default=None)
 
 # Email settings for production

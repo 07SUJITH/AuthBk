@@ -34,6 +34,7 @@ CORS_ALLOWED_ORIGINS = [
 
 # JWT settings for development
 JWT_AUTH_SECURE = False
+JWT_AUTH_SAMESITE = 'Lax'
 JWT_AUTH_COOKIE_DOMAIN = None
 
 # Email settings for development (console backend)
