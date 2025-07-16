@@ -8,7 +8,7 @@ from django.utils.encoding import force_bytes, smart_str
 from django.utils.encoding import DjangoUnicodeDecodeError
 from .utils import Util 
 from apps.authentication.services.otp_service import otp_service
-
+from decouple import config
 
 
 User = get_user_model()
@@ -94,9 +94,8 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
         email = self.validated_data['email']
         
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = PasswordResetTokenGenerator().make_token(user)
-        link = f"http://localhost:5173/reset-password/{uid}/{token}/"
-        
+        frontend_url = config('FRONTEND_URL', default='http://127.0.0.1:5173')
+        link = f"{frontend_url}/reset-password/{uid}/{token}/"
         email_body = f"""
         <!DOCTYPE html>
         <html>
