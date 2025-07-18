@@ -94,6 +94,7 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
         email = self.validated_data['email']
         
         uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = PasswordResetTokenGenerator().make_token(user)
         frontend_url = config('FRONTEND_URL', default='http://127.0.0.1:5173')
         link = f"{frontend_url}/reset-password/{uid}/{token}/"
         email_body = f"""
