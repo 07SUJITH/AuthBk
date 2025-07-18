@@ -1,44 +1,151 @@
-# JWT Auth Fullstack Project
+# Django JWT Authentication API
 
-A fullstack authentication demo using Django REST Framework (DRF) with JWT (JSON Web Token) authentication on the backend and a modern React + Vite + Tailwind frontend. This project demonstrates secure, stateless authentication using HTTP-only cookies, token refresh, and user registration.
+A comprehensive Django REST Framework backend providing secure JWT-based authentication with advanced features including password reset, OTP verification, automated token cleanup, and production-ready deployment configuration.
 
 ---
 
 ## Table of Contents
 
 - [Project Overview](#project-overview)
-- [Architecture](#architecture)
-- [Features](#features)
+- [Key Features](#key-features)
+- [Architecture & Tech Stack](#architecture--tech-stack)
+- [Quick Start](#quick-start)
 - [Backend Setup (Django)](#backend-setup-django)
-- [Frontend Setup (React + Vite)](#frontend-setup-react--vite)
-- [API Endpoints (Summary)](#api-endpoints-summary)
-- [Development Notes & Tips](#development-notes--tips)
-- [Security & Production Notes](#security--production-notes)
+- [API Endpoints](#api-endpoints)
+- [Advanced Features](#advanced-features)
+- [Deployment](#deployment)
+- [Development Notes](#development-notes)
+- [Security & Production](#security--production)
 
 ---
 
 ## Project Overview
 
-This project provides a robust authentication system using JWTs, with secure cookie storage and token rotation. It is suitable as a starter for modern web apps requiring authentication.
+This is a production-ready Django REST Framework backend that provides a complete authentication system with JWT tokens. It's designed as a robust foundation for modern web applications requiring secure user authentication, password management, and automated maintenance features.
 
-## Architecture
+**Perfect for:** SaaS applications, mobile app backends, microservices, or any project requiring secure user authentication.
 
-- **Backend:** Django 5, Django REST Framework, SimpleJWT, custom user model, CORS, SQLite (default)
-- **Frontend:** React 19, Vite, Tailwind CSS, shadcn/ui, axios
-- **Auth Flow:**
-  - Login/register via API
-  - JWT tokens stored in HTTP-only cookies
-  - Automatic token refresh
-  - Logout and token blacklisting
+## System Architecture
 
-## Features
+![System Architecture](docs/img/architecture.svg)
 
-- User registration & login
-- JWT authentication (access & refresh tokens)
+## Authentication Flow
+
+### Registration & OTP Verification
+
+![Authentication Flow](docs/img/RegistrationOTPVerification.svg)
+
+### Authentication Token Management
+
+![Authentication Flow](docs/img/AuthenticationTokenManagement.svg)
+
+### Authenticated Request Security
+
+![Authentication Flow](docs/img/AuthenticatedRequestSecurity.svg)
+
+## Key Features
+
+### 🔐 **Authentication & Security**
+
+- JWT authentication with access & refresh tokens
 - Secure HTTP-only cookie storage
-- Token rotation & blacklisting
-- Protected API endpoints
-- Modern, responsive UI
+- Token rotation & automatic blacklisting
+- Rate limiting on sensitive endpoints
+- Custom user model with email-based authentication
+
+### 🔑 **Password Management**
+
+- Password reset via email with secure tokens
+- Password change for authenticated users
+- OTP (One-Time Password) verification system
+- OTP resend functionality with rate limiting
+
+### 🤖 **Automated Maintenance**
+
+- Custom management command for token cleanup
+- GitHub Actions workflow for daily token cleanup
+- Secure cron endpoint with API key authentication
+- Automated expired token removal
+
+### 🚀 **Production Ready**
+
+- Environment-based configuration (dev/prod)
+- Render.com deployment configuration
+- PostgreSQL support for production
+- Static file handling with WhiteNoise
+- Comprehensive error handling and logging
+
+### 📊 **Developer Experience**
+
+- Postman collection included
+- Comprehensive API documentation
+- Redis integration for caching
+- Django admin interface
+- Detailed setup instructions
+
+## Architecture & Tech Stack
+
+### **Backend Framework**
+
+- **Django 5.2.3** - Web framework
+- **Django REST Framework 3.16.0** - API framework
+- **SimpleJWT 5.5.0** - JWT authentication
+- **Django CORS Headers** - Cross-origin requests
+- **Django Rate Limit** - API rate limiting
+
+### **Database & Caching**
+
+- **SQLite** (development) / **PostgreSQL** (production)
+- **Redis** - Caching and session storage
+- **Django Redis** - Redis integration
+
+### **Deployment & DevOps**
+
+- **Gunicorn** - WSGI HTTP Server
+- **WhiteNoise** - Static file serving
+- **GitHub Actions** - CI/CD automation
+- **Render.com** - Cloud deployment platform
+
+### **Security & Utilities**
+
+- **Python Decouple** - Environment variable management
+- **dj-database-url** - Database URL parsing
+- **Requests** - HTTP library for external API calls
+
+---
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd AuthBk
+
+# Create and activate virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment variables
+cp .env.sample .env
+
+# Create static directory
+mkdir -p static
+
+# Run migrations
+python manage.py makemigrations users
+python manage.py migrate
+
+# Create superuser (optional)
+python manage.py createsuperuser
+
+# Start development server
+python manage.py runserver
+```
+
+The API will be available at `http://localhost:8000/api/`
 
 ---
 
@@ -58,7 +165,7 @@ Follow these steps to set up the project locally without errors:
 
 ```bash
 git clone <repository-url>
-cd demo1
+cd AuthBk
 ```
 
 #### 2. Create Virtual Environment
@@ -133,69 +240,197 @@ The backend will be available at `http://localhost:8000/`
 
 ---
 
-## Frontend Setup (React + Vite)
+## Advanced Features
 
-### Prerequisites
+### 🔄 **Automated Token Cleanup**
 
-- Node.js 18+ (recommended)
-- npm (comes with Node.js)
-
-### Installation
+The system includes automated cleanup of expired JWT tokens:
 
 ```bash
-cd frontend
-npm install
+# Manual cleanup
+python manage.py flushexpiredtokens_daily
+
+# Automated via cron endpoint
+curl -X POST -H "X-Cron-Secret: your-secret-key" \
+  https://your-domain.com/api/auth/cron/flush-tokens/
 ```
 
-### Running the App
+**GitHub Actions Integration:**
+
+- Daily automated cleanup at midnight UTC
+- Secure API key authentication
+- Monitoring and error reporting
+
+### 🔐 **Security Features**
+
+- **Rate Limiting:** Prevents brute force attacks
+- **CORS Configuration:** Secure cross-origin requests
+- **HTTP-Only Cookies:** XSS protection for tokens
+- **Token Blacklisting:** Immediate token invalidation
+- **Environment-based Settings:** Separate dev/prod configs
+
+### 📧 **Email Integration**
+
+- Password reset emails with secure tokens
+- OTP verification system
+- Customizable email templates
+- Rate limiting on email endpoints
+
+### 🗄️ **Database Support**
+
+- **Development:** SQLite (zero configuration)
+- **Production:** PostgreSQL with connection pooling
+- **Caching:** Redis integration for performance
+
+### 📱 **API Testing**
+
+- **Postman Collection:** Pre-configured API tests
+- **Admin Interface:** Django admin for user management
+- **Debug Toolbar:** Development debugging tools
+
+---
+
+## API Endpoints
+
+### Authentication Endpoints (`/api/auth/`)
+
+| Endpoint                         | Method | Description                      | Authentication |
+| -------------------------------- | ------ | -------------------------------- | -------------- |
+| `/login/`                        | POST   | User login with email/password   | None           |
+| `/logout/`                       | POST   | User logout & token blacklisting | Required       |
+| `/token/refresh/`                | POST   | Refresh JWT access token         | Refresh Token  |
+| `/change-password/`              | POST   | Change user password             | Required       |
+| `/send-reset-password-email/`    | POST   | Send password reset email        | None           |
+| `/reset-password/<uid>/<token>/` | POST   | Reset password with token        | None           |
+| `/verify-otp/`                   | POST   | Verify OTP code                  | None           |
+| `/resend-otp/`                   | POST   | Resend OTP code                  | None           |
+| `/cron/flush-tokens/`            | POST   | Cleanup expired tokens (cron)    | X-Cron-Secret  |
+
+### User Management Endpoints (`/api/users/`)
+
+| Endpoint     | Method | Description                    | Authentication |
+| ------------ | ------ | ------------------------------ | -------------- |
+| `/register/` | POST   | Register new user account      | None           |
+| `/profile/`  | GET    | Get authenticated user profile | Required       |
+
+### Request/Response Format
+
+- **Content-Type:** `application/json`
+- **Authentication:** JWT tokens via HTTP-only cookies
+- **Rate Limiting:** Applied to sensitive endpoints
+- **CORS:** Configured for frontend integration
+
+---
+
+## Automated Token Cleanup Flow
+
+![Automated Token Cleanup Flow](docs/img/AutomatedTokenCleanupFlow.svg)
+
+## Deployment Architecture
+
+![Deployment Architecture](docs/img/DeploymentArchitecture.svg)
+
+---
+
+## Deployment
+
+### 🌐 **Render.com Deployment**
+
+This project is configured for easy deployment on Render.com:
+
+1. **Fork/Clone** this repository
+2. **Connect** to Render.com
+3. **Environment Variables** - Set in Render dashboard:
+   ```
+   ENVIRONMENT=production
+   SECRET_KEY=your-secret-key
+   DATABASE_URL=your-postgres-url
+   CRON_SECRET_KEY=your-cron-secret
+   ```
+4. **Deploy** using the included `render.yaml`
+
+### 🔄 **GitHub Actions Setup**
+
+For automated token cleanup:
+
+1. Add `CRON_SECRET_KEY` to GitHub Secrets
+2. Update the domain in `.github/workflows/trigger_flush_endpoint.yml`
+3. The workflow runs daily at midnight UTC
+
+### 📊 **Environment Configuration**
+
+- **Development:** Uses SQLite, debug mode enabled
+- **Production:** PostgreSQL, optimized settings, static file serving
+- **Settings:** Environment-based configuration in `config/settings/`
+
+---
+
+## Development Notes
+
+### 🔧 **Useful Commands**
 
 ```bash
-npm run dev
+# Database operations
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+
+# Token management
+python manage.py flushexpiredtokens_daily
+
+# Development server
+python manage.py runserver
+
+# Static files (production)
+python manage.py collectstatic
 ```
 
-- The app will be available at http://localhost:5173/
-- The frontend is configured to talk to the backend at `http://localhost:8000/api/` by default (see `src/config/axiosInstance.js`).
+### 📝 **Project Structure**
+
+```
+AuthBk/
+├── apps/
+│   ├── authentication/    # JWT auth, password reset, OTP
+│   └── users/            # User registration, profile
+├── config/
+│   ├── settings/         # Environment-based settings
+│   └── urls.py           # Main URL configuration
+├── .github/workflows/    # GitHub Actions
+├── static/              # Static files
+└── requirements.txt     # Python dependencies
+```
+
+### 🔍 **Testing & Debugging**
+
+- **Admin Panel:** `/admin/` - Manage users and tokens
+- **Postman Collection:** `AuthAPI.postman_collection.json`
+- **Redis Documentation:** `redis.md`
+- **API Documentation:** `scheduled_api_trigger.md`
 
 ---
 
-## API Endpoints (Summary)
+## Security & Production
 
-### Auth Endpoints
+### 🔒 **Security Best Practices**
 
-| Endpoint                   | Method | Description        |
-| -------------------------- | ------ | ------------------ |
-| `/api/auth/login/`         | POST   | User login         |
-| `/api/auth/logout/`        | POST   | User logout        |
-| `/api/auth/token/refresh/` | POST   | Refresh JWT tokens |
+- **Environment Variables:** Never commit secrets to version control
+- **HTTPS Only:** Set `JWT_AUTH_SECURE = True` in production
+- **Rate Limiting:** Configured on sensitive endpoints
+- **Token Security:** HTTP-only cookies prevent XSS attacks
+- **CORS Policy:** Restrictive cross-origin configuration
 
-### User Endpoints
+### 🚀 **Production Checklist**
 
-| Endpoint               | Method | Description          |
-| ---------------------- | ------ | -------------------- |
-| `/api/users/register/` | POST   | Register new user    |
-| `/api/users/profile/`  | GET    | Get user info (auth) |
-
-- All endpoints expect/return JSON.
-- Auth endpoints use HTTP-only cookies for tokens.
-
----
-
-## Development Notes & Tips
-
-- **CORS:** Only `localhost:3000`, `localhost:5173`, and their `127.0.0.1` equivalents are allowed by default for frontend-backend communication.
-- **Token Refresh:** The frontend automatically refreshes tokens when expired (see axios interceptors).
-- **Admin Panel:** Visit `/admin/` on the backend to manage users (login with superuser credentials).
-- **Custom User Model:** Email is used as the unique identifier.
-
----
-
-## Security & Production Notes
-
-- Set `DEBUG = False` and configure allowed hosts in production.
-- Use HTTPS and set `JWT_AUTH_SECURE = True` for cookies.
-- Store secrets and sensitive settings in environment variables.
-- Regularly run `python manage.py flushexpiredtokens` to clean up expired tokens.
-- For production DB, use PostgreSQL or another robust database.
+- [ ] Set `DEBUG = False`
+- [ ] Configure `ALLOWED_HOSTS`
+- [ ] Set up PostgreSQL database
+- [ ] Configure Redis for caching
+- [ ] Set all environment variables
+- [ ] Enable HTTPS
+- [ ] Set up automated backups
+- [ ] Configure monitoring and logging
+- [ ] Test all API endpoints
+- [ ] Set up GitHub Actions for token cleanup
 
 ---
 
