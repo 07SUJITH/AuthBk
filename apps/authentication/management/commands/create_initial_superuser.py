@@ -1,4 +1,5 @@
-from decouple import config
+import os
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
@@ -16,18 +17,20 @@ class Command(BaseCommand):
     Required environment variables:
     - DJANGO_SUPERUSER_EMAIL: Email for the superuser
     - DJANGO_SUPERUSER_PASSWORD: Password for the superuser
-    
-    Usage in production:
-    1. Set environment variables with superuser credentials
-    2. Run this command during deployment
-    3. Remove environment variables after successful superuser creation
     """
     help = 'Creates an initial superuser non-interactively if one does not exist.'
 
     def handle(self, *args, **options):
         User = get_user_model()
-        superuser_email = config('DJANGO_SUPERUSER_EMAIL')
-        superuser_password = config('DJANGO_SUPERUSER_PASSWORD')
+        
+        # Try to get from environment first, then fall back to python-decouple
+        superuser_email = os.environ.get('DJANGO_SUPERUSER_EMAIL')
+        superuser_password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+        
+        # Log the environment variables we found (without sensitive data)
+        self.stdout.write(self.style.NOTICE('Environment:'))
+        self.stdout.write(self.style.NOTICE(f'- DJANGO_SUPERUSER_EMAIL: {"Set" if superuser_email else "Not set"}'))
+        self.stdout.write(self.style.NOTICE(f'- DJANGO_SUPERUSER_PASSWORD: {"Set" if superuser_password else "Not set"}'))
 
         if not superuser_email or not superuser_password:
             self.stdout.write(self.style.ERROR(
@@ -46,9 +49,12 @@ class Command(BaseCommand):
                     password=superuser_password
                 )
                 self.stdout.write(self.style.SUCCESS(f'Superuser "{user.email}" created successfully.'))
+                self.stdout.write(self.style.SUCCESS('Please remove the superuser credentials from environment variables for security.'))
             else:
                 self.stdout.write(self.style.WARNING(f'Superuser with email "{superuser_email}" already exists. Skipping creation.'))
-        except IntegrityError:
-            self.stdout.write(self.style.WARNING(f'Superuser with email "{superuser_email}" already exists (IntegrityError). Skipping creation.'))
+        except IntegrityError as e:
+            self.stdout.write(self.style.WARNING(f'IntegrityError creating superuser: {e}'))
+            self.stdout.write(self.style.WARNING(f'Superuser with email "{superuser_email}" may already exist.'))
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f'Error creating superuser: {e}'))
+            self.stdout.write(self.style.ERROR(f'Unexpected error creating superuser: {e}'))
+            self.stdout.write(self.style.ERROR('Please check your database connection and settings.'))
