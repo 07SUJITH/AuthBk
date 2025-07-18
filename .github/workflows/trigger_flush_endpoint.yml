@@ -1,0 +1,33 @@
+name: Trigger Flush Expired Tokens Endpoint Daily
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  trigger_flush:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send POST request to Django endpoint
+        env:
+          CRON_SECRET_KEY: ${{ secrets.CRON_SECRET_KEY }}
+        run: |
+          echo "Triggering expired token cleanup..."
+
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+               -H "X-Cron-Secret: $CRON_SECRET_KEY" \
+               "https://authbk.onrender.com/api/v1/auth/cron/flush-tokens/")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n -1)
+
+          echo "Response: $body"
+          echo "HTTP Status: $http_code"
+
+          if [ "$http_code" -eq 200 ]; then
+            echo "Token cleanup completed successfully"
+          else
+            echo "Token cleanup failed with status $http_code"
+            exit 1
+          fi
