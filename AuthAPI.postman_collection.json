@@ -1,0 +1,307 @@
+{
+  "info": {
+    "_postman_id": "1173bbda-cf96-4017-ac4f-d632e4b44de9",
+    "name": "AuthAPI",
+    "description": "This template contains a boilerplate for documentation that you can quickly customize and reuse.\n\n### How to use this template:\n\n- Replace the content given brackets (()) with your API's details.\n- Tips are formatted in `codespan` - feel free to read and remove them.\n    \n\n---\n\n`Start with a brief overview of what your API offers.`\n\nThe ((product name)) provides many API products, tools, and resources that enable you to ((add product value here)).\n\n`You can also list the APIs you offer, link to the relevant pages, or do both in this section.`\n\n## **Getting started guide**\n\n`List the steps or points required to start using your APIs. Make sure to cover everything required to reach success with your API as quickly as possible.`\n\nTo start using the ((add APIs here)), you need to -\n\n`The points given below are from The Postman API's documentation. You can reference it to write your own getting started guide.`\n\n- You must use a valid API Key to send requests to the API endpoints. You can get your API key from Postman's [integrations dashboard](https://go.postman.co/settings/me/api-keys).\n- The API has [rate and usage limits](https://learning.postman.com/docs/developer/postman-api/postman-api-rate-limits/).\n- The API only responds to HTTPS-secured communications. Any requests sent via HTTP return an HTTP 301 redirect to the corresponding HTTPS resources.\n- The API returns request responses in JSON format. When an API request returns an error, it is sent in the JSON response as an error key.\n    \n\n## Authentication\n\n`Add details on the authorization keys/tokens required, steps that cover how to get them, and the relevant error codes.`\n\nThe ((product name)) API uses ((add your API's authorization type)) for authentication.\n\n`The details given below are from the Postman API's documentation. You can reference it to write your own authentication section.`\n\nPostman uses API keys for authentication. You can generate a Postman API key in the [API keys](https://postman.postman.co/settings/me/api-keys) section of your Postman account settings.\n\nYou must include an API key in each request to the Postman API with the X-Api-Key request header.\n\n### Authentication error response\n\nIf an API key is missing, malformed, or invalid, you will receive an HTTP 401 Unauthorized response code.\n\n## Rate and usage limits\n\n`Use this section to cover your APIs' terms of use. Include API limits, constraints, and relevant error codes, so consumers understand the permitted API usage and practices.`\n\n`The example given below is from The Postman API's documentation. Use it as a reference to write your APIs' terms of use.`\n\nAPI access rate limits apply at a per-API key basis in unit time. The limit is 300 requests per minute. Also, depending on your plan, you may have usage limits. If you exceed either limit, your request will return an HTTP 429 Too Many Requests status code.\n\nEach API response returns the following set of headers to help you identify your use status:\n\n| Header | Description |\n| --- | --- |\n| `X-RateLimit-Limit` | The maximum number of requests that the consumer is permitted to make per minute. |\n| `X-RateLimit-Remaining` | The number of requests remaining in the current rate limit window. |\n| `X-RateLimit-Reset` | The time at which the current rate limit window resets in UTC epoch seconds. |\n\n### 503 response\n\nAn HTTP `503` response from our servers indicates there is an unexpected spike in API access traffic. The server is usually operational within the next five minutes. If the outage persists or you receive any other form of an HTTP `5XX` error, [contact support](https://support.postman.com/hc/en-us/requests/new/).\n\n### **Need some help?**\n\n`Add links that customers can refer to whenever they need help.`\n\nIn case you have questions, go through our tutorials ((link to your video or help documentation here)). Or visit our FAQ page ((link to the relevant page)).\n\nOr you can check out our community forum, there’s a good chance our community has an answer for you. Visit our developer forum ((link to developer forum)) to review topics, ask questions, and learn from others.\n\n`You can also document or add links to libraries, code examples, and other resources needed to make a request.`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39003487",
+    "_collection_link": "https://www.postman.com/orange-firefly-62178/workspace/45ba7a14-ddf5-4243-a6fc-43935b7b15a4/collection/39003487-1173bbda-cf96-4017-ac4f-d632e4b44de9?action=share&source=collection_link&creator=39003487"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "authenticated user profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/profile/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile", ""]
+            },
+            "description": "# User Profile Fetch API Endpoint\n\n**User Profile Fetch API** endpoint for retrieving information about the authenticated user. The endpoint requires authentication via JWT tokens and implements a token refresh mechanism to ensure secure and seamless access to protected resources.\n\n## Endpoint Details\n\n- **URL**: `http://127.0.0.1:8000/api/v1/users/profile/`\n    \n- **Method**: `GET`\n    \n- **Authentication**: Required (JWT access token in cookies)\n    \n- **Permission**: `IsAuthenticated`\n    \n- **Content-Type**: `application/json`\n    \n\n## Authentication Flow\n\nThe endpoint requires a valid JWT access token to be present in the cookies. If the access token is missing or expired, the following flow is used to maintain user session security and convenience:\n\n1. **Access Token Missing or Expired**:\n    \n    - { \"detail\": \"Authentication credentials were not provided.\"}\n        \n    - The frontend should redirect to the token refresh endpoint (`/api/v1/auth/token/refresh/`) to attempt token refresh.\n        \n2. **Token Refresh**:\n    \n    - The refresh token (stored in cookies) is sent to `/api/v1/auth/token/refresh/`.\n        \n    - On success, the endpoint rotates the refresh token and returns a new access token and refresh token, which are set in cookies with a max age equal to their respective lifetimes.\n        \n    - The frontend automatically retries the original profile fetch request with the new access token.\n        \n3. **Refresh Token Missing or Expired**:\n    \n    - If the refresh token is missing or invalid, the refresh endpoint returns a `400 Bad Request` or similar error.\n        \n    - The frontend removes any expired tokens from cookies and redirects the user to the login page (`/api/v1/auth/login/`).\n        \n    - The user must re-enter credentials to generate new access and refresh tokens.\n        \n4. **Seamless Experience**:\n    \n    - This flow ensures users feel logged in without needing to re-authenticate manually, while maintaining security through token rotation and automatic token removal after expiry.\n        \n\nThis authentication flow applies to all endpoints requiring authentication.\n\n## Request Format\n\n- **Method**: `GET`\n    \n- **Headers**: None required (JWT access token is expected in cookies).\n    \n- **Body**: Not required for `GET` requests.\n    \n\n### Example Request\n\n``` http\nGET /api/v1/users/profile/ HTTP/1.1\nHost: 127.0.0.1:8000\nCookie: access_token=<JWT_ACCESS_TOKEN>\n\n ```\n\n## Response Format\n\n### Success Response (200 OK)\n\nReturned when the authenticated user's information is successfully retrieved.\n\n``` json\n{\n    \"id\": 33,\n    \"username\": \"sujith94967\",\n    \"email\": \"sujith94967@gmail.com\",\n    \"is_verified\": true,\n    \"date_joined\": \"2025-07-10T06:50:56Z\"\n}\n\n ```\n\n- **Fields**:\n    \n    - `id`: The unique ID of the user.\n        \n    - `username`: The automatically generated username (derived from the email, e.g., `sujith94967` from `sujith94967@gmail.com`).\n        \n    - `email`: The user's email address (used as the primary login field).\n        \n    - `is_verified`: Boolean indicating whether the user's email is verified.\n        \n    - `date_joined`: The timestamp when the user account was created (ISO 8601 format).\n        \n\n### Error Responses\n\n#### 401 Unauthorized (Missing or Invalid Access Token)\n\nReturned when no valid access token is provided in the cookies.\n\n``` json\n{\n    \"detail\": \"Authentication credentials were not provided.\"\n}\n\n ```\n\n- **Next Steps**:\n    \n    - The frontend should attempt to refresh the token by calling `/api/v1/auth/token/refresh/`.\n        \n    - If the refresh token is valid, retry the profile fetch request.\n        \n    - If the refresh token is missing or invalid, redirect to the login page.\n        \n\n#### 400 Bad Request (Refresh Token Failure)\n\nIf the refresh token is missing or invalid when calling `/api/v1/auth/token/refresh/`, the response might be:\n\n``` json\n{\n    \"detail\": \"Refresh token is invalid or missing.\"\n}\n\n ```\n\n- **Next Steps**:\n    \n    - Remove expired tokens from cookies.\n        \n    - Redirect the user to the login page (`/api/v1/auth/login/`) to re-authenticate.\n        \n\n## Configuration Details\n\n### Authentication\n\n- **JWT Tokens**: The endpoint uses JSON Web Tokens (JWT) for authentication, with access and refresh tokens stored in cookies.\n    \n- **Token Lifetime**: Access and refresh tokens have configured lifetimes, and cookies are set with `max_age` equal to the token's lifetime for automatic removal upon expiry.\n    \n- **Permission**: The `IsAuthenticated` permission class ensures only authenticated users can access the endpoint.\n    \n\n## Implementation Notes\n\n- **View**: `UserInfoAPIView` extends `RetrieveAPIView` to provide a simple interface for fetching the authenticated user's data.\n    \n    - The `get_object` method returns the current user (`request.user`).\n        \n- **Serializer**: `CustomUserSerializer` is a `ModelSerializer` that exposes the `id`, `username`, `email`, `is_verified`, and `date_joined` fields for read-only operations.\n    \n- **Security**:\n    \n    - The endpoint enforces authentication via the `IsAuthenticated` permission class.\n        \n    - Token rotation during refresh ensures enhanced security.\n        \n    - Automatic token removal from cookies after expiry reduces the risk of unauthorized access.\n        \n- **Error Handling**: The endpoint provides clear error messages (e.g., `detail` field) to guide frontend handling of authentication failures.\n    \n\n## Related Endpoints\n\n- **Token Refresh**: `/api/v1/auth/token/refresh/` (to refresh access and refresh tokens).\n    \n- **Login**: `/api/v1/auth/login/` (to generate new tokens after re-authentication).\n    \n\n## Usage Notes\n\n- The frontend should implement logic to handle `401 Unauthorized` responses by automatically calling the token refresh endpoint and retrying the original request.\n    \n- If the refresh attempt fails, the user should be redirected to the login page for re-authentication.\n    \n- This endpoint is designed for retrieving basic user profile information and can be extended to include additional fields (e.g., profile picture, bio) by modifying the `CustomUserSerializer`."
+          },
+          "response": []
+        },
+        {
+          "name": "registration",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"dffss@gmail.com\", \"password1\": \"pass@123\", \"password2\": \"pass@123\" }\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/register/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "register", ""]
+            },
+            "description": "# User Registration API Endpoint\n\n**User Registration API** endpoint for creating new user accounts with email verification via OTP. The endpoint enforces IP-based rate limiting, domain restrictions, password validation rules, and automatic username generation to ensure secure and consistent registration.\n\n## Endpoint Details\n\n- **URL**: `http://127.0.0.1:8000/api/v1/users/register/`\n    \n- **Method**: `POST`\n    \n- **Authentication**: None (Public endpoint, `AllowAny` permission)\n    \n- **Content-Type**: `application/json`\n    \n\n## Request Format\n\nThe request body must include the following fields:\n\n- `email`: The user's email address (must be unique).\n    \n- `password1`: The user's password.\n    \n- `password2`: Confirmation of the password (must match `password1`).\n    \n\n### Example Request\n\n``` json\n{\n    \"email\": \"sujithts000777@gmail.com\",\n    \"password1\": \"pass@123\",\n    \"password2\": \"pass@123\"\n}\n\n ```\n\n## Response Format\n\n### Success Response (201 Created)\n\nReturned when the user is successfully created, and an OTP is sent for verification.\n\n``` json\n{\n    \"message\": \"Registration successful. Verification OTP sent.\",\n    \"user\": {\n        \"id\": 35,\n        \"email\": \"sujithts000777@gmail.com\",\n        \"username\": \"sujithts000777\",\n        \"is_verified\": false\n    },\n    \"otp_meta\": {\n        \"resend_available\": true,\n        \"next_resend_in\": 60\n    }\n}\n\n ```\n\n- **Fields**:\n    \n    - `message`: Success message.\n        \n    - `user`: Details of the created user (`id`, `email`, `username`, `is_verified`).\n        \n        - `username`: Automatically generated from the email address (see [Username Generation](https://grok.com/chat/bb38ea6a-ddbc-4885-861e-efa92beb8f0c#username-generation)).\n            \n    - `otp_meta`: OTP-related metadata (`resend_available`, `next_resend_in` in seconds).\n        \n\n### Error Responses\n\n#### 400 Bad Request (Validation Errors)\n\nReturned for validation errors such as duplicate email, invalid password, or missing fields.\n\n1. { \"detail\": \"user with this email already exists.\", \"errors\": { \"email\": \\[\"user with this email already exists.\"\\] }}{ \"email\": \"[sujith94967@gmail.com](https://mailto:sujith94967@gmail.com)\", \"password1\": \"12345678@\", \"password2\": \"12345678@\"}\n    \n    Example Request:\n    \n2. { \"detail\": \"user with this email already exists.\", \"errors\": { \"email\": \\[\"user with this email already exists.\"\\], \"password1\": \\[\"This field may not be blank.\"\\], \"password2\": \\[\"This field may not be blank.\"\\] }}{ \"email\": \"[sujith94967@gmail.com](https://mailto:sujith94967@gmail.com)\", \"password1\": \"\", \"password2\": \"\"}\n    \n    Example Request:\n    \n3. { \"detail\": \"This password is too common.\", \"errors\": { \"password1\": \\[ \"This password is too common.\", \"This password is entirely numeric.\" \\] }}{ \"email\": \"[sujith9496@gmail.com](https://mailto:sujith9496@gmail.com)\", \"password1\": \"12345678\", \"password2\": \"12345678\"}\n    \n    Example Request:\n    \n4. { \"detail\": \"The password is too similar to the email.\", \"errors\": { \"password1\": \\[\"The password is too similar to the email.\"\\] }}{ \"email\": \"[sujith9496@gmail.com](https://mailto:sujith9496@gmail.com)\", \"password1\": \"sujith9496\", \"password2\": \"sujith9496\"}\n    \n    Example Request:\n    \n\n#### 403 Forbidden (Restricted Domain)\n\nReturned when the email domain is restricted.\n\n``` json\n{\n    \"detail\": \"Registrations from this domain are currently not allowed.\",\n    \"errors\": {\n        \"email\": [\"Registrations from this domain are currently not allowed.\"]\n    }\n}\n\n ```\n\nExample Request:\n\n``` json\n{\n    \"email\": \"dff@tempmail.com\",\n    \"password1\": \"pass@123\",\n    \"password2\": \"pass@123\"\n}\n\n ```\n\n#### 429 Too Many Requests (IP Rate Limiting)\n\nReturned when the IP exceeds 20 registration attempts per minute.\n\n``` json\n{\n    \"detail\": \"Too many registration attempts from this IP. Try again later.\"\n}\n\n ```\n\n## Configuration Details\n\n### Password Validation\n\nThe endpoint uses Django's built-in password validators defined in `settings.py`:\n\n``` python\nAUTH_PASSWORD_VALIDATORS = [\n    {\n        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',\n    },\n    {\n        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',\n    },\n    {\n        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',\n    },\n    {\n        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',\n    },\n]\n\n ```\n\n- **UserAttributeSimilarityValidator**: Ensures the password is not too similar to the email or other user attributes.\n    \n- **MinimumLengthValidator**: Enforces a minimum password length (default: 8 characters).\n    \n- **CommonPasswordValidator**: Prevents the use of common passwords.\n    \n- **NumericPasswordValidator**: Ensures the password is not entirely numeric.\n    \n\n### Restricted Domains\n\nThe endpoint restricts registrations from certain disposable email domains, defined in `settings.py`:\n\n``` python\nRESTRICTED_REGISTRATION_DOMAINS = [\n    'tempmail.com',\n    'mailinator.com',\n    '10minutemail.com',\n    'guerrillamail.com',\n    'yopmail.com',\n    'throwawaymail.com',\n    'fakeinbox.com',\n    'trashmail.com',\n    'maildrop.cc',\n    'temp-mail.org'\n]\n\n ```\n\n### Rate Limiting\n\n- **IP-Based Rate Limiting**: Limits registration attempts to 20 per minute per IP address to prevent abuse.\n    \n- **Implementation**: Uses Django's `is_ratelimited` function with the `user_registration` group and `ip` key.\n    \n\n## Username Generation\n\nUsernames are automatically generated from the email address during user creation, as defined in the `CustomUser` model's `save` method:\n\n- **Process**:\n    \n    1. Extracts the part of the email before the `@` (e.g., `sujithts000777` from `sujithts000777@gmail.com`).\n        \n    2. Replaces non-alphanumeric characters with underscores to ensure the username contains only letters, numbers, and underscores.\n        \n    3. Ensures uniqueness by appending a counter (e.g., `_1`, `_2`) if the generated username already exists.\n        \n    4. Excludes the current user’s record during updates to avoid conflicts.\n        \n- **Example**:\n    \n    - Email: `sujithts000777@gmail.com` → Username: `sujithts000777`\n        \n    - If `sujithts000777` exists, the next user with a similar email might get `sujithts000777_1`.\n        \n\nThis ensures that usernames are unique, user-friendly, and derived consistently without requiring manual input.\n\n## OTP Verification\n\n- Upon successful registration, an OTP is generated and sent to the user's email for verification.\n    \n- The OTP expires after a configured time (default: defined by `otp_service.expiry_minutes`).\n    \n- Users must verify their email before logging in.\n    \n- If the user attempts to register with an unverified email, they are redirected to the OTP resend endpoint (`/auth/resend-otp/`).\n    \n\n### OTP Email Format\n\nThe OTP email is sent in HTML format with the following structure:\n\n- **Subject**: \"Welcome! Please Verify Your Email Address\"\n    \n- **Body**:\n    \n    - Greeting with the user's email.\n        \n    - OTP code displayed prominently.\n        \n    - Instructions and security notes (e.g., OTP expiry, do not share, ignore if not requested).\n        \n    - Option to resend OTP if it expires.\n        \n\n## Implementation Notes\n\n- **CustomUser Model**: Extends Django’s `AbstractUser`, using `email` as the primary login field (`USERNAME_FIELD = 'email'`) and auto-generating usernames.\n    \n- **Serializer**: `UserRegistrationSerializer` handles user creation and validation, including password matching and strength checks.\n    \n- **OTP Logic**: `RegistrationOTPSerializer` manages OTP generation and email sending, separated from user creation for modularity.\n    \n- **Transaction Safety**: User creation and OTP generation are wrapped in a `transaction.atomic()` block to ensure data consistency.\n    \n- **Error Handling**: The endpoint provides detailed error messages (`detail` for user-facing messages, `errors` for specific field errors) to assist frontend development.\n    \n- **Caching**: The endpoint uses the `never_cache` decorator to prevent caching of sensitive registration responses.\n    \n\n## Related Endpoints\n\n- **OTP Resend**: `/auth/resend-otp/` (for resending OTP to unverified users).\n    \n- **Login**: Users attempting to log in with an unverified email should be redirected to the OTP resend endpoint."
+          },
+          "response": []
+        }
+      ],
+      "description": "The `/me` endpoints let you manage information about the authenticated user."
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"sujith94967@gmail.com\",\n    \"password\":\"pass@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login", ""]
+            },
+            "description": "## 🔑 Login API\n\nAuthenticate a user and set access & refresh tokens in HTTP-only cookies.\n\n- **Method:** `POST`\n    \n- **Endpoint:** `/login/`\n    \n- **Authentication Required:** ❌ No\n    \n\n---\n\n### 📥 Request Body\n\n``` json\n{\n  \"email\": \"sujith94967@gmail.com\",\n  \"password\": \"12345678@\"\n}\n\n ```\n\n---\n\n### ✅ Successful Login (Verified User)\n\n**Status:** `200 OK`\n\n``` json\n{\n  \"id\": 33,\n  \"username\": \"sujith94967\",\n  \"email\": \"sujith94967@gmail.com\",\n  \"is_verified\": true,\n  \"date_joined\": \"2025-07-10T06:50:56Z\",\n  \"message\": \"Login successful\"\n}\n\n ```\n\n---\n\n### 🚫 Failed Login Scenarios\n\n#### 1\\. ❗ Unverified Email\n\n**Status:** `401 Unauthorized`\n\n``` json\n{\n  \"message\": \"Email not verified. Please verify using the OTP sent to your email.\",\n  \"errors\": {\n    \"email\": [\"User account not verified.\"]\n  },\n  \"email\": \"sujith94967@gmail.com\",\n  \"is_verified\": false\n}\n\n ```\n\n---\n\n#### 2\\. ❗ Invalid Email Format\n\n**Request:**\n\n``` json\n{\n  \"email\": \"sujith94967gmail.com\",\n  \"password\": \"12345678@\"\n}\n\n ```\n\n**Status:** `400 Bad Request`\n\n``` json\n{\n  \"email\": [\"Enter a valid email address.\"]\n}\n\n ```\n\n---\n\n#### 3\\. ❗ Invalid Credentials\n\n**Request:**\n\n``` json\n{\n  \"email\": \"sujith94967@gmail.com\",\n  \"password\": \"wrongpassword\"\n}\n\n ```\n\n**Status:** `400 Bad Request`\n\n``` json\n{\n  \"non_field_errors\": [\"Invalid credentials\"]\n}\n\n ```\n\n---\n\n#### 4\\. ⏳ Too Many Requests (Rate Limit Hit)\n\n**Status:** `429 Too Many Requests`\n\n``` json\n{\n  \"detail\": \"Too many login attempts from this IP. Try again later.\"\n}\n\n ```\n\n- **Rate limit:** 5 login attempts per IP per minute.\n    \n- **Temporary block duration:** 1 minute.\n    \n- **Note:** This is currently handled by temporary rate limiting only.\n    \n\n---"
+          },
+          "response": []
+        },
+        {
+          "name": "change-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"old_password\": \"pass@123\",\n    \"new_password\": \"sujith94967@1\",\n    \"confirm_password\":\"sujith94967@1\"\n   \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/change-password/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "change-password", ""]
+            },
+            "description": "## 🔐 Change Password API\n\nAllows an authenticated user to securely change their password.\n\n- **Method:** `POST`\n    \n- **Endpoint:** `/change-password/`\n    \n- **Authentication Required:** ✅ Yes (JWT via HTTP-only cookies or session)\n    \n\n---\n\n### 📥 Request Body\n\n``` json\n{\n  \"old_password\": \"currentPassword123\",\n  \"new_password\": \"newPassword321\",\n  \"confirm_password\": \"newPassword321\"\n}\n\n ```\n\n> ⚠️ All fields are required.  \n🔒 `new_password` is validated using Django's built-in `validate_password()`: \n  \n\n- Checks for minimum strength\n    \n- Prevents common or numeric-only passwords\n    \n- Blocks passwords similar to username/email\n    \n\n---\n\n### ✅ Successful Password Change\n\n**Status:** `200 OK`\n\n``` json\n{\n  \"message\": \"Password changed successfully.\"\n}\n\n ```\n\n---\n\n### 🚫 Error Responses\n\n#### 1\\. ❌ Authentication Failure\n\nOccurs if JWT tokens are **missing**, **expired**, or **invalid**.\n\n**Status:** `401 Unauthorized`\n\n``` json\n{\n  \"detail\": \"Authentication credentials were not provided.\"\n}\n\n ```\n\n---\n\n#### 2\\. ❌ Incorrect Old Password\n\n**Request:**\n\n``` json\n{\n  \"old_password\": \"wrongOldPassword\",\n  \"new_password\": \"newPass@123\",\n  \"confirm_password\": \"newPass@123\"\n}\n\n ```\n\n**Status:** `400 Bad Request`\n\n``` json\n{\n  \"old_password\": [\"Old password is incorrect\"]\n}\n\n ```\n\n---\n\n#### 3\\. ❌ Invalid Input (Missing Fields)\n\n**Request:**\n\n``` json\n{\n  \"old_password\": \"pass@1321\",\n  \"new_password\": \"\"\n}\n\n ```\n\n**Status:** `400 Bad Request`\n\n``` json\n{\n  \"old_password\": [\"Old password is incorrect\"],\n  \"new_password\": [\"This field may not be blank.\"],\n  \"confirm_password\": [\"This field is required.\"]\n}\n\n ```\n\n---\n\n#### 4\\. ❌ Weak or Common Password\n\n**Request:**\n\n``` json\n{\n  \"old_password\": \"pass@123\",\n  \"new_password\": \"12345678\",\n  \"confirm_password\": \"12345678\"\n}\n\n ```\n\n**Status:** `400 Bad Request`\n\n``` json\n{\n  \"new_password\": [\n    \"This password is too common.\",\n    \"This password is entirely numeric.\"\n  ]\n}\n\n ```\n\n---\n\n#### 5\\. ❌ Password Too Similar to Username\n\n**Request:**\n\n``` json\n{\n  \"old_password\": \"pass@123\",\n  \"new_password\": \"sujith94967@1\",\n  \"confirm_password\": \"sujith94967@1\"\n}\n\n ```\n\n**Status:** `400 Bad Request`\n\n``` json\n{\n  \"new_password\": [\n    \"The password is too similar to the username.\"\n  ]\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "send reset-password email",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"sujith94967@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/send-reset-password-email/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "send-reset-password-email", ""]
+            },
+            "description": "### Password Reset Email Endpoint Documentation\n\n`POST /api/auth/request-reset-email/`\n\n---\n\n#### 📌 **Purpose**\n\nAllows users to request a password reset link via email. Implements dual-layer protection against abuse:\n\n1. **IP-based rate limiting** (10 requests/minute)\n    \n2. **Email-based rate limiting** (3 requests/hour)\n    \n\n---\n\n### 🔒 **Request Requirements**\n\n**Headers:**\n\nContent-Type: application/json\n\n✅ **Success Response**\n\n**Code:** `200 OK`  \n**Body:**\n\n``` json\n{\n  \"message\": \"Password reset link sent. Please check your email.\"\n}\n\n ```\n\n_Triggered when:_\n\n- Email is valid and registered\n    \n- Rate limits not exceeded\n    \n\n---\n\n### ❌ **Error Responses**\n\n#### 1\\. **Invalid Email Format**\n\n**Code:** `400 Bad Request`  \n**Body:**\n\n``` json\n{\n  \"email\": [\"Enter a valid email address.\"]\n}\n\n ```\n\n_Example Trigger:_ `sujith949gamil.com`\n\n---\n\n#### 2\\. **Email Not Found**\n\n**Code:** `400 Bad Request`  \n**Body:**\n\n``` json\n{\n  \"email\": [\"No user found with this email address.\"]\n}\n\n ```\n\n_Example Trigger:_ Unregistered email\n\n---\n\n#### 3\\. **IP Rate Limit Exceeded**\n\n**Code:** `429 Too Many Requests`  \n**Body:**\n\n``` json\n{\n  \"detail\": \"Too many password reset requests from this IP. Try again later.\"\n}\n\n ```\n\n_Trigger:_ More than 10 requests in 60 seconds from the same IP.\n\n---\n\n#### 4\\. **Email Reset Limit Exceeded**\n\n**Code:** `429 Too Many Requests`  \n**Body:**\n\n``` json\n{\n  \"error\": \"Rate limit exceeded\",\n  \"message\": \"Maximum 3 reset requests per hour exceeded. Please try again later.\"\n}\n\n ```\n\n_Trigger:_ 4th reset request for the same email within 1 hour.\n\n---\n\n#### 5\\. **Missing Email Field**\n\n**Code:** `400 Bad Request`  \n**Body:**\n\n``` json\n{\n  \"email\": [\"This field is required.\"]\n}\n\n ```\n\n---\n\n### ⚠️ **Security Protections**\n\n| Layer | Rule | Action |\n| --- | --- | --- |\n| **IP Rate Limiting** | \\>10 requests/minute | Block IP for 60 seconds |\n| **Email Rate Limiting** | \\>3 reset requests/hour per email | Block email for 1 hour |\n| **Account Lockout** | \\>5 failed token attempts | Lock account for 20 minutes |\n\n---\n\n### 🔧 **Testing via Postman**\n\n**Sample Valid Request:**\n\n``` http\nPOST /api/auth/request-reset-email/\nContent-Type: application/json\n{\n  \"email\": \"verified_user@example.com\"\n}\n\n ```\n\n**Test Cases:**\n\n1. ✅ Valid email → `200 OK` + email sent\n    \n2. ❌ Malformed email (e.g., `user@invalid`) → `400 Bad Request`\n    \n3. ❌ Unregistered email → `400 Bad Request`\n    \n4. ❌ 11+ requests from same IP in 60s → `429 Too Many Requests`\n    \n5. ❌ 4th reset for `user@example.com` in 1 hour → `429 Too Many Requests`\n    \n\n---\n\n### ⚙️ **Backend Configuration**\n\nCustomize in `settings.py`:\n\n``` python\nPASSWORD_RESET_SETTINGS = {\n    'MAX_RESET_REQUESTS_PER_HOUR': 3,   # Email requests limit\n    'MAX_RESET_ATTEMPTS': 5,            # Failed token attempts before lockout\n    'LOCKOUT_DURATION_MINUTES': 20      # Lockout duration\n}\n\n ```\n\n---\n\n### 📬 **Email Contents**\n\nUsers receive an HTML email containing:\n\n- **Reset button** with 15-minute expiry\n    \n- Manual link fallback\n    \n\n---\n\n### ♻️ **Reset Tracking**\n\nAll counters (requests/attempts/lockout) are cleared when:\n\n- User **successfully resets password**\n    \n- Lockout duration **expires automatically**\n    \n- Redis keys **auto-delete** after 1 hour (TTL)"
+          },
+          "response": []
+        },
+        {
+          "name": "token-refresh",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/refresh/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "token", "refresh", ""]
+            },
+            "description": "Refresh your access token using a valid `refresh_token` stored in **HTTP-only cookies**.\n\n- **Method:** `POST`\n    \n- **Endpoint:** `/api/v1/auth/token/refresh/`\n    \n- **Authentication Required:** ✅ Yes (via `refresh_token` cookie)\n    \n- **No request body required.**\n    \n- The **access token** (short-lived, 10 minutes) and **refresh token** (long-lived, 7 days) are stored in **HTTP-only cookies**. These durations are configurable via setting\n    \n- On expiry of access token, call this endpoint to refresh both tokens without re-login.\n    \n- Requires a valid `refresh_token` in cookies.\n    \n- If token rotation is enabled:\n    \n    - Old refresh tokens are blacklisted\n        \n    - New tokens are issued in response cookies\n        \n\n---\n\n### 📤 Example Request\n\n**No body needed. Cookies must include:**\n\n```\nCookie: refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n\n ```\n\n---\n\n### ✅ Successful Token Refresh\n\n**Status:** `200 OK`\n\n**Response:**\n\n``` json\n{\n  \"detail\": \"Token refreshed successfully\"\n}\n\n ```\n\n**Set-Cookie Headers:**\n\n```\nSet-Cookie: access_token=<new_token>; HttpOnly; Max-Age=600; Path=/; SameSite=Strict\nSet-Cookie: refresh_token=<new_token>; HttpOnly; Max-Age=604800; Path=/; SameSite=Strict\n\n ```\n\n---\n\n### 🚫 Error Responses\n\n#### 1\\. ❌ No Refresh Token in Cookie\n\n**Status:** `401 Unauthorized`\n\n``` json\n{\n  \"detail\": \"Refresh token not found\"\n}\n\n ```\n\n#### 2\\. ❌ Expired or Invalid Refresh Token\n\n**Status:** `401 Unauthorized`\n\n``` json\n{\n  \"detail\": \"Token is invalid or expired\"\n}\n\n ```\n\n#### 3\\. ❌ Blacklisted Token (if rotation enabled)\n\n**Status:** `401 Unauthorized`\n\n``` json\n{\n  \"detail\": \"Token is blacklisted\"\n}\n\n ```\n\n---\n\n### 🔄 Common Refresh Flow (Frontend)\n\n1. Access token expires → `401 Unauthorized` from API\n    \n2. Frontend sends `POST /api/v1/auth/token/refresh/`\n    \n3. Server verifies `refresh_token` from cookies\n    \n4. New tokens are set in cookies\n    \n5. Retry original request\n    \n\n---\n\n### 🔒 Best Practice Summary\n\n- Use HTTP-only cookies\n    \n- Handle token refresh in frontend\n    \n- Enable token rotation & blacklist\n    \n- Secure refresh endpoint with"
+          },
+          "response": []
+        },
+        {
+          "name": "rest-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"new_password\":\"pass@321\",\n    \"confirm_password\":\"pass@321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password/MzM/csql5h-51f8b21a797561f7ff62965c38b296724/",
+              "host": ["{{base_url}}"],
+              "path": [
+                "auth",
+                "reset-password",
+                "MzM",
+                "csql5h-51f8b21a797561f7ff62965c38b296724",
+                ""
+              ]
+            },
+            "description": "### Password Reset Confirmation Endpoint\n\n`POST /api/v1/auth/reset-password///`\n\n---\n\n#### 🔐 **Purpose**\n\nAllows users to set a new password after clicking a reset link. Implements dual protection:\n\n- **IP-based throttling** (20 requests/minute)\n    \n- **Account lockout** after 5 failed attempts\n    \n\n---\n\n### 📥 Request Structure\n\n**URL Format:**\n\n``` django\nPOST http://127.0.0.1:8000/api/v1/auth/reset-password/MzE/csoig7-21f2e66c7495177528d25ace7fed0ba7/\n\n ```\n\n**Path Parameters:**  \n\n| Parameter | Example Value | Description |  \n|-----------|-----------------------------------|----------------------|  \n| `uidb64` | `MzE` | Base64-encoded user ID |  \n| `token` | `csoig7-21f2e...` (64 chars) | Time-limited token |\n\n**Body (JSON):**\n\n``` json\n{\n  \"new_password\": \"SecurePass123!\",\n  \"confirm_password\": \"SecurePass123!\"\n}\n\n ```\n\n**Headers:**\n\n``` http\nContent-Type: application/json\n\n ```\n\n---\n\n### 📤 Response Scenarios\n\n#### 1\\. ✅ Success (200 OK)\n\n**Trigger:** Valid token + matching passwords\n\n``` json\n{\n  \"message\": \"Password reset successful.\"\n}\n\n ```\n\n---\n\n#### 2\\. ❌ Invalid/Expired Token (400 Bad Request)\n\n**Trigger:** Malformed, expired, or previously used token\n\n``` json\n{\n  \"detail\": \"Reset failed. Invalid or expired link.\",\n  \"errors\": {\n    \"non_field_errors\": [\n      \"The reset link is invalid or has expired.\"\n    ]\n  }\n}\n\n ```\n\n---\n\n#### 3\\. 🚫 IP Rate Limit Exceeded (429 Too Many Requests)\n\n**Trigger:** 21+ requests from same IP in 60 seconds\n\n``` json\n{\n  \"detail\": \"Too many password reset attempts from this IP. Try again later.\"\n}\n\n ```\n\n---\n\n#### 4\\. 🔒 Account Locked (429 Too Many Requests)\n\n**Trigger:** 6th attempt with same UID (any token) within 1 hour\n\n``` json\n{\n  \"detail\": \"Account temporarily locked. Please wait 29 minutes before trying again.\"\n}\n\n ```\n\n---\n\n### 🧪 Test Cases\n\n#### Case 1: Valid Request\n\n``` http\nPOST /reset-password/MzE/valid-token-123/\n{\n  \"new_password\": \"NewPass123!\",\n  \"confirm_password\": \"NewPass123!\"\n}\n\n ```\n\n✅ **Response:**\n\n``` http\nHTTP 200 OK\n{\"message\": \"Password reset successful.\"}\n\n ```\n\n---\n\n#### Case 2: Expired Token\n\n``` http\nPOST /reset-password/MzE/expired-token-456/\n{\n  \"new_password\": \"Pass123!\",\n  \"confirm_password\": \"Pass123!\"\n}\n\n ```\n\n❌ **Response:**\n\n``` http\nHTTP 400 Bad Request\n{\n  \"detail\": \"Reset failed. Invalid or expired link.\",\n  \"errors\": {\n    \"non_field_errors\": [\"The reset link is invalid or has expired.\"]\n  }\n}\n\n ```\n\n---\n\n#### Case 3: Trigger Account Lockout\n\n1. Send 5 requests with **invalid tokens** for same UID:\n    \n    ``` http\n    POST /reset-password/MzE/wrong-token-1/ {...}\n    POST /reset-password/MzE/wrong-token-2/ {...}\n    ...\n    \n     ```\n    \n2. 6th request (even with valid token):\n    \n    ``` http\n    POST /reset-password/MzE/valid-token-123/ {...}\n    \n     ```\n    \n      \n    🔒 **Response:**\n    \n    ``` http\n    HTTP 429 Too Many Requests\n    {\n    \"detail\": \"Account temporarily locked. Please wait 29 minutes before trying again.\"\n    }\n    \n     ```\n    \n\n---\n\n### ⚙️ System Behavior\n\n| Action | Consequence |\n| --- | --- |\n| Successful reset | Terminates all active sessions |\n| Failed attempt | Increments attempt counter |\n| 5 failed attempts | Locks account for 30 minutes |\n| IP exceeds 20 reqs/minute | Blocks IP for 60 seconds |\n\n---\n\n### 🕒 Timing Rules\n\n| Event | Duration |\n| --- | --- |\n| Reset token validity | 15 minutes |\n| Account lockout period | 30 minutes |\n| IP block duration | 60 seconds |\n| Attempt counter reset | 1 hour (auto) |\n\n---\n\n### 🔍 Debugging Tips\n\n1. **Check Redis Keys:**\n    \n    ``` bash\n    redis-cli KEYS \":1:pwd_reset:*\"\n    \n     ```\n    \n2. **Verify Lockout Status:**\n    \n    ``` bash\n    redis-cli GET \":1:pwd_reset:lockout:user@example.com\"\n    \n     ```\n    \n3. **View Attempt Count:**\n    \n    ``` bash\n    redis-cli GET \":1:pwd_reset:attempts:user@example.com\"\n    \n     ```\n    \n\n> **Note:** Keys prefixed with `:1:` indicate Django's default cache namespace \n  \n\n---\n\n### ⚠️ Security Notes\n\n1. Changing tokens **does not bypass** lockout\n    \n2. Valid tokens **expire after use**\n    \n3. Lockout clears automatically after 30 minutes\n    \n4. All counters reset on successful password change"
+          },
+          "response": []
+        },
+        {
+          "name": "verify-otp",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\n{\n    \"email\": \"sujithts94967@gmail.com\",\n    \"otp\":\"212823\"\n}\n\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/verify-otp/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-otp", ""]
+            },
+            "description": "## 🔍 OTP Verification API\n\nVerifies a user's OTP for account activation. Protected by **IP-based rate limiting** and **user-specific lockout** mechanisms.\n\n---\n\n### 📍 Endpoint\n\nPOST /api/v1/auth/verify-otp/\n\n---\n\n### 📝 Request\n\n**Headers**\n\n| Key | Value |\n| --- | --- |\n| `Content-Type` | `application/json` |\n\n**Body**\n\n``` json\n{\n  \"email\": \"user@example.com\",\n  \"otp\": \"123456\"\n}\n\n ```\n\n---\n\n### ✅ Successful Response\n\n#### 🟢 OTP Verified Successfully\n\n``` json\n{\n  \"message\": \"Email verified successfully.\",\n  \"user\": {\n    \"id\": 33,\n    \"email\": \"sujith94967@gmail.com\",\n    \"is_verified\": true\n  }\n}\n\n ```\n\n---\n\n### ❌ Error Responses\n\n#### 🔴 400 Bad Request\n\n| Scenario | Example Response |\n| --- | --- |\n| **Email already verified** | `json { \"detail\": \"User is already verified.\" }` |\n| **Missing email field** | `json { \"detail\": \"This field is required.\", \"errors\": { \"email\": [\"This field is required.\"] } }` |\n| **Missing OTP field** | `json { \"detail\": \"This field is required.\", \"errors\": { \"otp\": [\"This field is required.\"] } }` |\n| **Invalid email format** | `json { \"detail\": \"Enter a valid email address.\", \"errors\": { \"email\": [\"Enter a valid email address.\"] } }` |\n| **Invalid OTP length** | `json { \"detail\": \"Ensure this field has at least 6 characters.\", \"errors\": { \"otp\": [\"Ensure this field has at least 6 characters.\"] } }` |\n| **User does not exist** | `json { \"detail\": \"User with this email does not exist.\" }` |\n| **No valid OTP found** | `json { \"detail\": \"No valid OTP found. Please request a new one.\" }` |\n| **OTP expired** | `json { \"detail\": \"OTP has expired. Please request a new one.\" }` |\n| **OTP already used** | `json { \"detail\": \"OTP has already been used. Please request a new one.\" }` |\n| **Invalid OTP code** | `json { \"detail\": \"Invalid OTP code. Please check and try again.\" }` |\n\n#### 🔴 429 Too Many Requests\n\n| Scenario | Example Response |\n| --- | --- |\n| **IP rate limit exceeded** | `json { \"detail\": \"Too many OTP verification attempts from this IP. Try again later.\" }` |\n| **User locked (failed attempts)** | `json { \"detail\": \"Account locked. Try again in 19 minutes.\" }` |\n\n---\n\n### 🛡️ Protections\n\n| Mechanism | Description |\n| --- | --- |\n| **IP Throttling** | Max 30 requests per minute per IP |\n| **Failed Attempt Lockout** | 5 failed attempts in 10 mins → lock for 20 mins |\n| **OTP Expiry** | OTP valid for 5 minutes |\n| **Single-Use OTP** | OTP is invalidated after first successful use |\n| **Redis Storage** | OTPs and security metadata stored in Redis |\n\n---\n\n### Workflow Logic\n\n1. **Validation Checks**\n    \n    - Email format validation\n        \n    - User existence check\n        \n    - Account verification status\n        \n    - OTP length check\n        \n2. **Security Checks**\n    \n    - IP-based rate limiting (30 req/min)\n        \n    - User lockout (after 5 failed attempts)\n        \n    - OTP expiration\n        \n    - Single-use OTP enforcement\n        \n\n---\n\n### Key Insights\n\n1. **Idempotent Verification**\n    \n    - Already verified users get a `400` immediately\n        \n    - Cannot re-verify accounts (`is_verified` flag checked)\n        \n2. **Dual Protection System**\n    \n    - IP Rate Limiting: `30 req/min`\n        \n    - User Lockout: `5 failed attempts → 20 min lock`\n        \n3. **Error Prioritization**\n    \n    - Validation errors come before security checks\n        \n    - Rate-limiting (429) takes priority over 400 logic errors\n        \n4. **Stateless Architecture**\n    \n    - Redis handles all temporary data/state\n        \n    - DB writes only on successful verification\n        \n    - Auto-expiry ensures cleanup of stale OTPs\n        \n5. **Brute-Force Protection**\n    \n    - Progressive lockout strategy mitigates repeated attempts"
+          },
+          "response": []
+        },
+        {
+          "name": "resend-otp",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\n{\n    \"email\": \"sujithts94967@gmail.com\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/resend-otp/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "resend-otp", ""]
+            },
+            "description": "## 🔁 OTP Resend API\n\nResend the OTP to a user’s email for account verification. Rate-limited and protected by cooldowns and lockouts.\n\n---\n\n### 📍 Endpoint\n\n```\nPOST /api/v1/auth/resend-otp/\n\n ```\n\n---\n\n### 📝 Request\n\n**Headers**\n\n| Key | Value |\n| --- | --- |\n| `Content-Type` | `application/json` |\n\n**Body**\n\n``` json\n{\n  \"email\": \"sujith94967@gmail.com\"\n}\n\n ```\n\n---\n\n### ✅ Successful Responses\n\n#### 🟢 OTP Sent or Resent\n\n``` json\n{\n  \"message\": \"OTP resent successfully. Attempt 2/3\",\n  \"resend_count\": 2,\n  \"max_resend_count\": 3,\n  \"next_resend_available\": 60\n}\n\n ```\n\n#### 🟢 New OTP Sent After Expiry\n\n``` json\n{\n  \"message\": \"New OTP sent successfully\",\n  \"resend_count\": 0,\n  \"max_resend_count\": 3,\n  \"next_resend_available\": 60\n}\n\n ```\n\n---\n\n### ❌ Error Responses\n\n#### 🔴 400 Bad Request\n\n| Description | Example Response |\n| --- | --- |\n| **Email already verified** |  |\n\n``` json\n{\n  \"detail\": \"User is already verified.\",\n  \"errors\": {\n    \"email\": [\n      \"User is already verified.\"\n    ]\n  }\n}\n\n ```\n\n| **Missing email field** |\n\n``` json\n{\n  \"detail\": \"This field is required.\",\n  \"errors\": {\n    \"email\": [\n      \"This field is required.\"\n    ]\n  }\n}\n\n ```\n\n| **Invalid email format** |\n\n``` json\n{\n  \"detail\": \"Enter a valid email address.\",\n  \"errors\": {\n    \"email\": [\n      \"Enter a valid email address.\"\n    ]\n  }\n}\n\n ```\n\n| **Blank email field** |\n\n``` json\n{\n  \"detail\": \"This field may not be blank.\",\n  \"errors\": {\n    \"email\": [\n      \"This field may not be blank.\"\n    ]\n  }\n}\n\n ```\n\n| **Cooldown not yet passed** |\n\n``` json\n{\n  \"message\": \"Request failed\",\n  \"errors\": {\n    \"wait_time\": \"Wait 47s before requesting another OTP.\"\n  }\n}\n\n ```\n\n#### 🔴 429 Too Many Requests\n\n| Reason | Example |\n| --- | --- |\n| **IP rate limit exceeded** |  |\n\n``` json\n{\n  \"detail\": \"Too many OTP resend requests from this IP. Try again later.\"\n}\n\n ```\n\n| **User locked (resend limit hit)** |\n\n``` json\n{\n  \"detail\": \"Account locked. Try again in 19 minutes.\"\n}\n\n ```\n\n#### 🔴 503 Redis Error\n\n``` json\n{\n  \"detail\": \"Could not verify rate limits. Please try again later.\"\n}\n\n ```\n\n---\n\n### 🛡️ Protections\n\n| Mechanism | Details |\n| --- | --- |\n| IP Throttling | Max 30 requests/minute per IP |\n| Resend Attempts | Max 3 per OTP |\n| Cooldown | 60 seconds between each resend |\n| Lockout | 20 min lock after 3 attempts |\n| OTP Expiry | 5 minutes |\n| OTP Storage | Redis |"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-API-Key",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://farming-simulator.pstmn.io"
+    },
+    {
+      "key": "base_url",
+      "value": " http://127.0.0.1:8000/api/v1",
+      "type": "default"
+    }
+  ]
+}
