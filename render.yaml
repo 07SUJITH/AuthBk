@@ -17,3 +17,7 @@ services:
         value: production
       - key: PYTHON_VERSION
         value: 3.11.9
+# Note: This file is currently not being used by Render.
+# Superuser creation is handled through the build command in Render's dashboard:
+# pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate && python manage.py create_initial_superuser
+# For paid plans, use: render shell -> python manage.py createsuperuser
