@@ -1,10 +1,15 @@
+from decouple import config
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
+from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django_ratelimit.core import is_ratelimited
 from rest_framework import status
 from rest_framework.exceptions import Throttled, ValidationError
@@ -479,4 +484,26 @@ class ResendOTPAPIView(GenericAPIView):
                 "detail": "An unexpected error occurred.",
                 "errors": str(e) 
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# This variable is crucial for securing your endpoint.
+CRON_SECRET_KEY = config('CRON_SECRET_KEY', 'a-very-insecure-default-key-change-it!')
+
+@csrf_exempt  # Allows POST requests without CSRF token 
+@require_POST 
+def run_flush_expired_tokens(request):
+    """
+    Triggers the flushexpiredtokens_daily management command via an HTTP endpoint.
+    Requires a POST request and a matching 'X-Cron-Secret' header for security.
+    """
+    if request.method == 'POST':
+        if request.headers.get('X-Cron-Secret') != CRON_SECRET_KEY:
+            return JsonResponse({'status': 'Unauthorized', 'message': 'Invalid or missing secret key.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            call_command('flushexpiredtokens_daily') 
+            return JsonResponse({'status': 'success', 'message': 'Expired tokens flushed successfully.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': f'Error flushing tokens: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return JsonResponse({'status': 'method_not_allowed', 'message': 'Only POST requests are allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
             

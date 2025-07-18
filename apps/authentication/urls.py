@@ -7,8 +7,8 @@ from .views import (
     SendPasswordResetEmailAPIView,
     UserPasswordResetAPIView,
     VerifyOTPAPIView,
-    ResendOTPAPIView
-    
+    ResendOTPAPIView,
+    run_flush_expired_tokens
 )
 
 urlpatterns = [
@@ -20,4 +20,5 @@ urlpatterns = [
     path('reset-password/<uid>/<token>/', UserPasswordResetAPIView.as_view(), name='password-reset'),
     path('verify-otp/', VerifyOTPAPIView.as_view(), name='verify-otp'),
     path('resend-otp/', ResendOTPAPIView.as_view(), name='resend-otp'),
+    path('cron/flush-tokens/', run_flush_expired_tokens, name='flush_tokens_cron'),
 ]
