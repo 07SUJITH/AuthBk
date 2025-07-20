@@ -128,6 +128,15 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
+# Install development dependencies (linters & tools)
+pip install -r dev-requirements.txt
+
+# Set up Git hooks for automatic linting & formatting
+pre-commit install
+
+# (Optional) Run all pre-commit hooks on the entire codebase
+pre-commit run --all-files
+
 # Set up environment variables
 cp .env.sample .env
 
@@ -179,6 +188,15 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 ```bash
 pip install -r requirements.txt
+
+# Install development dependencies (linters & tools)
+pip install -r dev-requirements.txt
+
+# Set up Git hooks for automatic linting & formatting
+pre-commit install
+
+# (Optional) Run all pre-commit hooks on the entire codebase
+pre-commit run --all-files
 ```
 
 #### 4. Set Up Environment Variables
@@ -383,6 +401,19 @@ python manage.py runserver
 
 # Static files (production)
 python manage.py collectstatic
+```
+
+### 🛠️ **Code Quality & Git Hooks**
+
+This project uses [pre-commit](https://pre-commit.com/) hooks (configured in `.pre-commit-config.yaml`) together with tool settings in `pyproject.toml` to automatically lint and format code on every commit.
+
+```bash
+# After installing requirements as shown above
+pip install -r dev-requirements.txt
+pre-commit install  # installs the git hooks
+
+# Optional: run all hooks on the entire repository
+pre-commit run --all-files
 ```
 
 ### 📝 **Project Structure**
