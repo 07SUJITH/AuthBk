@@ -5,9 +5,9 @@ from rest_framework_simplejwt.token_blacklist.management.commands.flushexpiredto
 
 
 class Command(BaseCommand):
-    help = 'Flushes expired tokens daily'
+    help = "Flushes expired tokens daily"
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('Running flushexpiredtokens daily task...'))
+        self.stdout.write(self.style.SUCCESS("Running flushexpiredtokens daily task..."))
         BaseFlushExpiredTokensCommand().handle(*args, **options)  # Execute the original command
-        self.stdout.write(self.style.SUCCESS('flushexpiredtokens daily task completed.'))
+        self.stdout.write(self.style.SUCCESS("flushexpiredtokens daily task completed."))
