@@ -19,7 +19,7 @@ select = [
 ignore = []                     # No ignores, let Ruff + formatter handle all
 
 [tool.ruff.format]
-quote-style = "double"          
-indent-style = "space"          
+quote-style = "double"
+indent-style = "space"
 skip-magic-trailing-comma = false
 docstring-code-format = true
