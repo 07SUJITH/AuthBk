@@ -1,0 +1,25 @@
+[tool.ruff]
+exclude = [
+    "*/migrations/*",
+]
+line-length = 100               # Maximum line length
+target-version = "py312"        # Python 3.12 (matches local 3.12.3)
+fix = true                      # Enable auto-fix when running `ruff check --fix`
+respect-gitignore = true        # Ignore files listed in .gitignore
+
+[tool.ruff.lint]
+select = [
+    "E",    # PEP8 errors
+    "F",    # Pyflakes
+    "I",    # Import sorting
+    "B",    # Flake8-bugbear (common bug patterns)
+    "UP",   # Pyupgrade (modern Python syntax)
+    "SIM",  # Simplify (code simplifications)
+]
+ignore = []                     # No ignores, let Ruff + formatter handle all
+
+[tool.ruff.format]
+quote-style = "double"          
+indent-style = "space"          
+skip-magic-trailing-comma = false
+docstring-code-format = true
